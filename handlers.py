@@ -133,7 +133,7 @@ class IBHistoricBarHandler:
 
     def closeRecord(self, reqId):
         whatToShow = self.records[reqId]['whatToShow']
-        ticker = self.records[reqId]['contract'].getSymbol()
+        ticker = self.records[reqId]['contract'].symbol
         records = pd.concat(self.records[reqId]['bars'], axis=1, join='outer').T.iloc[::-1]
         records.to_sql(name=ticker, index=False, if_exists='append',
                        con=sqlite3.connect(os.path.join(utils.PATH, utils.determineDatabaseToUse(whatToShow))))

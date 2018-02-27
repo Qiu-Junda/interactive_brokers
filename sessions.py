@@ -18,7 +18,7 @@ class IBHistoricalDataSession(ib.IB):
 
         for ibContract in ibContracts:
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (ibContract.getSymbol(), )
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (ibContract.symbol, )
             )
             relevantTables = cursor.fetchall()
 

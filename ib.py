@@ -71,7 +71,7 @@ class IB(EWrapper, EClient):
         :return:
         """
         reqId = self.getNextId()
-        self.logger.info('#Request %d: Getting headTimestamp for %s' % (reqId, contract.getSymbol()))
+        self.logger.info('#Request %d: Getting headTimestamp for %s' % (reqId, contract.symbol))
         self.historicBarHandler.createRecord(reqId, contract=contract, endDatetime=endDatetime,
                                              durationString=durationString, barSizeSetting=barSizeSetting,
                                              whatToShow=whatToShow, useRTH=useRTH, formatDate=formatDate,
@@ -113,7 +113,7 @@ class IB(EWrapper, EClient):
                                                      keepUpToDate=keepUpToDate, chartOptions=chartOptions,
                                                      headTimestamp=headTimestamp)
                 self.logger.info('#Request %d: Getting historical bars for %s from %s' %
-                                 (reqId, contract.getSymbol(), endDatetime)
+                                 (reqId, contract.symbol, endDatetime)
                                  )
         else:
 
@@ -122,7 +122,7 @@ class IB(EWrapper, EClient):
             # I have not found a way to do it properly with asyncio, but am not keen on relying on third party
             # sources such as Ewald de wit's ib_insync.
             self.historicBarHandler.reindexRecord(reqId, oldReqId)
-            self.logger.info('#Request %d: Getting historical bars for %s from scratch' % (reqId, contract.getSymbol()))
+            self.logger.info('#Request %d: Getting historical bars for %s from scratch' % (reqId, contract.symbol))
 
         self.reqHistoricalData(reqId, contract, endDatetime, durationString, barSizeSetting,
                                whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
@@ -172,7 +172,7 @@ class IB(EWrapper, EClient):
                 record['formatDate'], record['keepUpToDate'], record['chartOptions'], headTimestamp=headTimestampStr
             )
         else:
-            self.logger.info('All historical bars for %s received.' % record['contract'].getSymbol())
+            self.logger.info('All historical bars for %s received.' % record['contract'].symbol)
 
     # ====================================  Live data functions  =============================================
 
@@ -187,7 +187,7 @@ class IB(EWrapper, EClient):
         :return:
         """
         reqId = self.getNextId()
-        self.logger.info('#Request %d Started: Tick data for %s' % (reqId, contract.getSymbol()))
+        self.logger.info('#Request %d Started: Tick data for %s' % (reqId, contract.symbol))
         self.tickPriceHandler.createRecord(reqId, contract, snapshot, regulatorySnapshot, mktDataOptions)
         self.tickSizeHandler.createRecord(reqId, contract, snapshot, regulatorySnapshot, mktDataOptions)
         self.tickGenericHandler.createRecord(reqId, contract, snapshot, regulatorySnapshot, mktDataOptions)
