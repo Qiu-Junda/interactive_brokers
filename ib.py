@@ -1,7 +1,7 @@
-import data
 import utils
 import logging
 import datetime
+import handlers
 from ibapi.client import EClient
 from ibapi.utils import iswrapper
 from ibapi.wrapper import EWrapper
@@ -14,10 +14,10 @@ class IB(EWrapper, EClient):
 
         self.reqId = 0
         self.logger = logging.getLogger('Interactive Brokers')
-        self.historicBarHandler = data.IBHistoricBarHandler()
-        self.tickGenericHandler = data.IBTickGenericHandler()
-        self.tickPriceHandler = data.IBTickPriceHandler()
-        self.tickSizeHandler = data.IBTickSizeHandler()
+        self.historicBarHandler = handlers.IBHistoricBarHandler()
+        self.tickGenericHandler = handlers.IBTickGenericHandler()
+        self.tickPriceHandler = handlers.IBTickPriceHandler()
+        self.tickSizeHandler = handlers.IBTickSizeHandler()
 
     # ==================================  other api functions  ============================================
 
@@ -129,12 +129,25 @@ class IB(EWrapper, EClient):
 
     @iswrapper
     def historicalData(self, reqId, bar):
+        """
+
+        :param reqId:
+        :param bar:
+        :return:
+        """
         super().historicalData(reqId, bar)
         self.logger.debug('#Request %d: Received bar data for %s' % (reqId, bar.date))
         self.historicBarHandler.editRecord(reqId, bars=bar)
 
     @iswrapper
     def historicalDataEnd(self, reqId, start, end):
+        """
+
+        :param reqId:
+        :param start:
+        :param end:
+        :return:
+        """
         super().historicalDataEnd(reqId, start, end)
         self.logger.info('#Request %d: Received bar data from %s to %s' % (reqId, start, end))
         self.historicBarHandler.closeRecord(reqId)
@@ -164,6 +177,15 @@ class IB(EWrapper, EClient):
     # ====================================  Live data functions  =============================================
 
     def getMktData(self, contract, genericTickList='', snapshot=False, regulatorySnapshot=False, mktDataOptions=None):
+        """
+
+        :param contract:
+        :param genericTickList:
+        :param snapshot:
+        :param regulatorySnapshot:
+        :param mktDataOptions:
+        :return:
+        """
         reqId = self.getNextId()
         self.logger.info('#Request %d Started: Tick data for %s' % (reqId, contract.getSymbol()))
         self.tickPriceHandler.createRecord(reqId, contract, snapshot, regulatorySnapshot, mktDataOptions)
@@ -172,6 +194,11 @@ class IB(EWrapper, EClient):
         self.reqMktData(reqId, contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions)
 
     def stopMktData(self, ticker):
+        """
+
+        :param ticker:
+        :return:
+        """
         for reqId, nestedDict in self.tickPriceHandler:
             if nestedDict['ticker'] == ticker:
                 self.tickPriceHandler.closeRecord(reqId)
@@ -182,18 +209,40 @@ class IB(EWrapper, EClient):
 
     @iswrapper
     def tickPrice(self, reqId, tickType, price, attrib):
+        """
+
+        :param reqId:
+        :param tickType:
+        :param price:
+        :param attrib:
+        :return:
+        """
         super().tickPrice(reqId, tickType, price, attrib)
         self.logger.debug('#Request %d In Progress: Tick Price (%d) Received' % (reqId, tickType))
         self.tickPriceHandler.refreshRecord(reqId, tickType, price, attrib)
 
     @iswrapper
     def tickSize(self, reqId, tickType, size):
+        """
+
+        :param reqId:
+        :param tickType:
+        :param size:
+        :return:
+        """
         super().tickSize(reqId, tickType, size)
         self.logger.debug('#Request %d In Progress: Tick Size (%d) Received' % (reqId, tickType))
         self.tickSizeHandler.refreshRecord(reqId, tickType, size)
 
     @iswrapper
     def tickGeneric(self, reqId, tickType, value):
+        """
+
+        :param reqId:
+        :param tickType:
+        :param value:
+        :return:
+        """
         super().tickGeneric(reqId, tickType, value)
         self.logger.debug('#Request %d In Progress: Tick Generic (%d) Received' % (reqId, tickType))
         self.tickGenericHandler.refreshRecord(reqId, tickType, value)

@@ -2,8 +2,6 @@ import utils
 import logging
 import sessions
 import contracts
-import pandas as pd
-import kristal_functions
 
 
 def setupLogger():
@@ -36,18 +34,3 @@ def extractHistoricalData(whatToShow):
     session = sessions.IBHistoricalDataSession(host, port, clientId)
     session.extract(ibContracts, durationString, barSizeSetting, whatToShow,
                     useRTH, formatDate, keepUpToDate, chartOptions)
-
-
-def calculateKristalNav(modelPortfolios):
-    host = utils.HOST
-    port = utils.PAPER_ACCT_PORT  # kristal_functions.ASHEESH_ACCT_PORT
-    clientId = utils.NAV_ID
-
-    setupLogger()
-    session = sessions.IBCalculateKristalNavSession(host, port, clientId)
-    session.calculateNav(modelPortfolios)
-
-
-if __name__ == '__main__':
-    modelPortfolios = pd.read_excel(r'C:\Users\Junda\Downloads\ModelAccountPosition.xlsx', sheetname=None, index_col=0)
-    calculateKristalNav(modelPortfolios)
