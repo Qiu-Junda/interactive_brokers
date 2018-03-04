@@ -16,9 +16,3 @@ class Contract(contract.Contract):
         self.currency = currency
         self.secType = secType
         self.exchange = exchange
-
-    def __getattr__(self, item):
-        if item == 'symbol':
-            return self.symbol if self.symbol else self.localSymbol
-        else:
-            return self[item]
